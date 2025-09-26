@@ -12,12 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/stocks")
 public class StockController {
 
-    private final StockService stockService;
-
     @Autowired
-    public StockController(StockService stockService) {
-        this.stockService = stockService;
-    }
+    private StockService stockService;
 
     @GetMapping("/{stockSymbol}")
     public StockResponse getStock(@PathVariable String stockSymbol) {

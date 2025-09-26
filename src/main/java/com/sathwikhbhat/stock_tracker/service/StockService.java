@@ -9,12 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class StockService {
 
-    private final StockClient stockClient;
-
     @Autowired
-    public StockService(StockClient stockClient) {
-        this.stockClient = stockClient;
-    }
+    private StockClient stockClient;
 
     public StockResponse getStockForSymbol(String stockSymbol) {
         AlphaVantageResponse response = stockClient.getStockQuote(stockSymbol);
