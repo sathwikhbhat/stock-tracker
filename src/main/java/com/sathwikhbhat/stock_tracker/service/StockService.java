@@ -16,7 +16,8 @@ public class StockService {
         AlphaVantageResponse response = stockClient.getStockQuote(stockSymbol);
         return StockResponse.builder()
                 .symbol(response.globalQuote().symbol())
-                .lastUpdated(response.globalQuote().lastTradingDay())
+                .price(Double.parseDouble(response.globalQuote().price()))
+                .lastUpdated(response.globalQuote().latestTradingDay())
                 .build();
     }
 
