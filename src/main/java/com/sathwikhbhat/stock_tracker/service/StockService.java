@@ -7,6 +7,7 @@ import com.sathwikhbhat.stock_tracker.dto.StockHistoryResponse;
 import com.sathwikhbhat.stock_tracker.dto.StockOverviewResponse;
 import com.sathwikhbhat.stock_tracker.dto.StockResponse;
 import com.sathwikhbhat.stock_tracker.entity.FavoriteStock;
+import com.sathwikhbhat.stock_tracker.exception.FavoriteAlreadyExistsException;
 import com.sathwikhbhat.stock_tracker.repository.FavoriteStockRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class StockService {
     @Transactional
     public FavoriteStock addFavorite(String stockSymbol) {
         if(favoriteStockRepository.existsBySymbol(stockSymbol)) {
-            throw new RuntimeException("Favorite Stock already exists");
+            throw new FavoriteAlreadyExistsException(stockSymbol);
         }
 
         FavoriteStock favoriteStock = FavoriteStock.builder()
