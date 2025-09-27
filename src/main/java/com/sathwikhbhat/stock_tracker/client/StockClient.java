@@ -1,5 +1,6 @@
 package com.sathwikhbhat.stock_tracker.client;
 
+import com.sathwikhbhat.stock_tracker.dto.StockHistoryResponse;
 import com.sathwikhbhat.stock_tracker.dto.StockOverviewResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,18 @@ public class StockClient {
                         .build())
                 .retrieve()
                 .bodyToMono(StockOverviewResponse.class)
+                .block();
+    }
+
+    public StockHistoryResponse getStockHistory(String stockSymbol, int days) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("function", "TIME_SERIES_DAILY")
+                        .queryParam("symbol", stockSymbol)
+                        .queryParam("apikey", apiKey)
+                        .build())
+                .retrieve()
+                .bodyToMono(StockHistoryResponse.class)
                 .block();
     }
 
