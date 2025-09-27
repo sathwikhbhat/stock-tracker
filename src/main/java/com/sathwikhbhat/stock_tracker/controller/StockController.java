@@ -1,5 +1,6 @@
 package com.sathwikhbhat.stock_tracker.controller;
 
+import com.sathwikhbhat.stock_tracker.dto.StockOverviewResponse;
 import com.sathwikhbhat.stock_tracker.dto.StockResponse;
 import com.sathwikhbhat.stock_tracker.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,11 @@ public class StockController {
     @GetMapping("/{stockSymbol}")
     public StockResponse getStock(@PathVariable String stockSymbol) {
         return stockService.getStockForSymbol(stockSymbol.toUpperCase());
+    }
+
+    @GetMapping("/{stockSymbol}/overview")
+    public StockOverviewResponse getStockOverview(@PathVariable String stockSymbol) {
+        return stockService.getStockOverviewForSymbol(stockSymbol.toUpperCase());
     }
 
 }
