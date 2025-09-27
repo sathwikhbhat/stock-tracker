@@ -12,6 +12,11 @@ A comprehensive stock tracking application built with Spring Boot that provides 
 - **Exception Handling**: Comprehensive error handling with custom exceptions
 - **H2 Database**: Lightweight embedded database for data persistence
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4b3cecaa-6e0b-42ff-8550-7972e8430fab" alt="Screenshot (37)" width="60%"/>
+</p>
+
+
 ## Tech Stack
 
 - **Framework**: Spring Boot 3.5.6
