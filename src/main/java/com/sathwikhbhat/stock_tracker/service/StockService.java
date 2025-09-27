@@ -8,12 +8,15 @@ import com.sathwikhbhat.stock_tracker.dto.StockOverviewResponse;
 import com.sathwikhbhat.stock_tracker.dto.StockResponse;
 import com.sathwikhbhat.stock_tracker.entity.FavoriteStock;
 import com.sathwikhbhat.stock_tracker.exception.FavoriteAlreadyExistsException;
+import com.sathwikhbhat.stock_tracker.exception.StockDataException;
+import com.sathwikhbhat.stock_tracker.exception.StockNotFoundException;
 import com.sathwikhbhat.stock_tracker.repository.FavoriteStockRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class StockService {
@@ -26,12 +29,23 @@ public class StockService {
 
     public StockResponse getStockForSymbol(String stockSymbol) {
         AlphaVantageResponse response = stockClient.getStockQuote(stockSymbol);
+
+        if (response == null || response.globalQuote() == null) {
+            throw new StockNotFoundException(stockSymbol);
+        }
+
+        String priceStr = response.globalQuote().price();
+        if (priceStr == null) {
+            throw new StockDataException(stockSymbol);
+        }
+
         return StockResponse.builder()
                 .symbol(response.globalQuote().symbol())
-                .price(Double.parseDouble(response.globalQuote().price()))
+                .price(Double.parseDouble(priceStr))
                 .lastUpdated(response.globalQuote().latestTradingDay())
                 .build();
     }
+
 
     public StockOverviewResponse getStockOverviewForSymbol(String stockSymbol) {
         return stockClient.getStockOverview(stockSymbol);
@@ -54,7 +68,7 @@ public class StockService {
 
     @Transactional
     public FavoriteStock addFavorite(String stockSymbol) {
-        if(favoriteStockRepository.existsBySymbol(stockSymbol)) {
+        if (favoriteStockRepository.existsBySymbol(stockSymbol)) {
             throw new FavoriteAlreadyExistsException(stockSymbol);
         }
 
@@ -63,6 +77,20 @@ public class StockService {
                 .build();
 
         return favoriteStockRepository.save(favoriteStock);
+    }
+
+    public List<StockResponse> getAllFavorites() {
+        List<FavoriteStock> favorites = favoriteStockRepository.findAll();
+        return favorites.stream()
+                .map(fav -> {
+                    try {
+                        return getStockForSymbol(fav.getSymbol());
+                    } catch (StockNotFoundException | StockDataException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .toList();
     }
 
 }

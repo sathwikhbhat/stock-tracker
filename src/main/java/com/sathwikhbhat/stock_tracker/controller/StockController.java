@@ -49,4 +49,9 @@ public class StockController {
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
+    @GetMapping("/favorites")
+    public List<StockResponse> getFavoriteStocks() {
+        return stockService.getAllFavorites();
+    }
+
 }
